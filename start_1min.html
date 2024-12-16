@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period and Trend Display</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000000; /* Black background */
+            color: #00FF00; /* Neon green text */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .period {
+            font-size: 36px; /* Period number style */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .trend {
+            font-size: 48px; /* Larger font for trend */
+            font-weight: bold;
+        }
+
+        .blink {
+            animation: blink 1s step-start infinite;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="period" id="period">Loading...</div>
+    <div class="trend" id="trend">Loading...</div>
+
+    <script>
+        const trendSequence = [
+            "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", 
+            "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", 
+            "SMALL", "BIG", "BIG", "SMALL"
+        ];
+
+        // Function to calculate the current period number and result
+        function getPeriodAndTrend() {
+            const now = new Date();
+
+            // Set the start time to 5:29 AM IST
+            const startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 29, 0);
+
+            // Calculate the elapsed seconds from the start time
+            const elapsedSeconds = Math.max(Math.floor((now - startTime) / 1000), 0);
+
+            // Calculate the 1-minute interval count
+            const intervalCount = Math.floor(elapsedSeconds / 60);
+
+            // Format the current period string
+            const formattedDate = now.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD format
+            const periodNumber = formattedDate + "10001" + String(intervalCount).padStart(4, '0'); // Combine date with interval
+
+            // Determine the trend (BIG or SMALL)
+            const trend = trendSequence[intervalCount % trendSequence.length];
+
+            return { periodNumber, trend };
+        }
+
+        // Function to update the display
+        function updateDisplay() {
+            const { periodNumber, trend } = getPeriodAndTrend();
+
+            // Update the period and trend display
+            document.getElementById("period").textContent = periodNumber;
+            document.getElementById("trend").textContent = trend;
+        }
+
+        // Update the display every minute
+        setInterval(updateDisplay, 60000); // 60000 ms = 1 minute
+
+        // Initial display update
+        updateDisplay();
+    </script>
+</body>
+</html>

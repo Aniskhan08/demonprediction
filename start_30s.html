@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period Display</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000000; /* Black background */
+            color: #00FF00; /* Neon green text */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .period {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .trend {
+            font-size: 48px; /* Increased font size for BIG/SMALL */
+            margin-top: 20px;
+            font-weight: bold; /* Make the trend text bold */
+            font-style: italic;
+        }
+        .blink {
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="period" id="period">Loading...</div>
+    <div class="trend" id="trend">Loading...</div>
+    <div class="blink">_</div>
+
+    <script>
+        // Trend pattern based on your specific sequence
+        const trend = ["BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "BIG"];
+
+        // Function to calculate the current period number (full period format)
+        function getFullPeriod() {
+            const now = new Date();
+
+            // Set the start time to 5:29:30 AM today (Indian Standard Time)
+            const startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 29, 30);
+
+            // Calculate the difference in seconds (current time minus start time)
+            const elapsedSeconds = Math.max(Math.floor((now - startTime) / 1000), 0); // Elapsed time in seconds
+            
+            // Calculate the number of 30-second intervals that have passed
+            const intervalCount = Math.floor(elapsedSeconds / 30);  // Get the number of periods
+
+            // Format the period with the date and interval count
+            const formattedDate = now.toISOString().slice(0, 10).replace(/-/g, ''); // Format as YYYYMMDD
+            const periodString = "100001" + String(intervalCount).padStart(4, '0'); // Add the interval count to the base
+
+            return formattedDate + periodString; // Return the full period number
+        }
+
+        // Function to update the period and trend display
+        function updateDisplay() {
+            const fullPeriod = getFullPeriod(); // Get the full period number
+            const periodNumber = fullPeriod.slice(8); // Extract only the interval part
+            const trendResult = trend[parseInt(periodNumber) % trend.length]; // Get the trend result based on the period number
+
+            // Display the current full period number and trend (BIG or SMALL)
+            document.getElementById("period").textContent = fullPeriod;
+            document.getElementById("trend").textContent = trendResult;
+        }
+
+        // Update the display every 30 seconds
+        setInterval(updateDisplay, 30000); // 30000 milliseconds = 30 seconds
+
+        // Initial display update
+        updateDisplay();
+    </script>
+</body>
+</html>
